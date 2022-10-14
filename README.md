@@ -9,7 +9,7 @@ git clone https://github.com/m4r1vs/nextcloud-share-cli
 cd nextcloud-share-cli
 make install
 ```
-# installation (Mac & Windows)
+# installation (Mac & Windows) ⚠ might not work
 1. Install [Go](https://go.dev/doc/install) if not installed already
 2. clone this repository
 3. run `go build -o bin/ncli ncli.go` in the cloned directory
