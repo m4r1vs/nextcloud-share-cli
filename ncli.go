@@ -291,7 +291,7 @@ func create_config() {
 	folders := list_nc_folders(new_config)
 
 	fmt.Println()
-	fmt.Println("Thank you :) Finally, we need to know which folder you want to use for default uploads.")
+	fmt.Println("Great! Finally, we need to know which folder you want to use for default uploads.")
 	new_config.UploadFolder = set_folder(folders)
 
 	fmt.Println()
