@@ -417,5 +417,5 @@ func main() {
 	println("   -U, --upload <path/foo.bar>                 Upload given file to nextcloud")
 	println("   -C, --configure [setting | reset]           List the settings, configure a given setting or reset 'em all")
 	println()
-	println("github.com/m4r1vs/nextcloud-share-cli v1.0.1, Created by Marius Niveri <marius@niveri.de>")
+	println("github.com/m4r1vs/nextcloud-share-cli v1.0.2, Created by Marius Niveri <marius@niveri.de>")
 }
