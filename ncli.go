@@ -57,7 +57,9 @@ func check(err error) {
 	}
 }
 
-func make_nc_request(method string, url string, data *strings.Reader, osc bool, config Config) []byte {
+// Makes a http(s) request to the nextcloud instance specified in configuration file
+// ocs flag is needed for requests to the nextcloud OCS endpoint
+func make_nc_request(method string, url string, data *strings.Reader, ocs bool, config Config) []byte {
 	client := &http.Client{}
 
 	var req *http.Request
@@ -75,7 +77,7 @@ func make_nc_request(method string, url string, data *strings.Reader, osc bool, 
 
 	req.Header.Add("Authorization", "Basic "+auth_header)
 
-	if osc {
+	if ocs {
 		req.Header.Add("OCS-APIRequest", "true")
 	}
 
@@ -92,11 +94,15 @@ func make_nc_request(method string, url string, data *strings.Reader, osc bool, 
 	return body
 }
 
+// input: bla/bli/file.txt
+// output: file.txt
 func get_file_name(path_to_file string) string {
 	path_split := strings.Split(path_to_file, "/")
 	return path_split[len(path_split)-1]
 }
 
+// share an already uploaded file via link and get the shared link
+// TODO: Password support
 func share_file(remote_path string, pw string, config Config) {
 
 	var xml_ocs XMLOcs
@@ -125,6 +131,8 @@ func share_file(remote_path string, pw string, config Config) {
 	fmt.Println("🥂 Now sharable as " + xml_ocs.Data.URL + endstr)
 }
 
+// read the given file path and upload its content to nextcloud
+// if share is true, share_file() is called afterwards
 func upload_file(path_to_file string, config Config, share bool) {
 
 	if !file_exists(path_to_file) {
@@ -171,6 +179,7 @@ func upload_file(path_to_file string, config Config, share bool) {
 	}
 }
 
+// returns []string containing the full paths to all folders in users nextcloud home
 func list_nc_folders(config Config) []string {
 	var folders XMLMultistatus
 
@@ -194,12 +203,14 @@ func list_nc_folders(config Config) []string {
 	return folderList
 }
 
+// get home directory on local machine
 func get_home_dir() string {
 	dirname, err := os.UserHomeDir()
 	check(err)
 	return dirname
 }
 
+// local machine
 func file_exists(file_path string) bool {
 	if _, err := os.Stat(file_path); err == nil {
 		return true
@@ -211,6 +222,7 @@ func file_exists(file_path string) bool {
 	return false
 }
 
+// foo/bar/ -> foo/bar
 func remove_trailing_backspace(s string) string {
 	sz := len(s)
 	if sz > 0 && s[sz-1] == '/' {
@@ -219,6 +231,8 @@ func remove_trailing_backspace(s string) string {
 	return s
 }
 
+// foo/bar/ -> true
+// foo/bar -> false
 func has_trailing_backspace(s string) bool {
 	sz := len(s)
 	if sz > 0 && s[sz-1] == '/' {
@@ -227,6 +241,7 @@ func has_trailing_backspace(s string) bool {
 	return false
 }
 
+// lists folders in nextcloud home and asks user to choose one of them
 func set_folder(folders []string) string {
 	fmt.Println("Input a number from 1 to " + strconv.Itoa(len(folders)-1))
 
@@ -246,6 +261,7 @@ func set_folder(folders []string) string {
 	return folders[folder_num]
 }
 
+// create new config (and delete existing one if it does)
 func create_config() {
 
 	new_config := Config{
@@ -314,6 +330,7 @@ func read_config() Config {
 	return config
 }
 
+// all handlers are invoked directly by different flags such as "--upload"
 func handle_upload(i int, args []string, config Config, share bool) {
 	if len(args) < i+2 {
 		log.Fatal("🚨🚨 No path provided")
@@ -402,4 +419,6 @@ func main() {
 	println("   -S, --share <path/foo.bar>                  Upload given file to nextcloud and create a link to share that file")
 	println("   -U, --upload <path/foo.bar>                 Upload given file to nextcloud")
 	println("   -C, --configure [setting | reset]           List the settings, configure a given setting or reset 'em all")
+	println()
+	println("github.com/m4r1vs/nextcloud-share-cli v1.0.1, Created by Marius Niveri <marius@niveri.de>")
 }
