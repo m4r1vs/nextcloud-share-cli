@@ -17,9 +17,6 @@ import (
 	"github.com/pelletier/go-toml/v2"
 )
 
-const root_url = "https://cloud.mafiasi.de"
-const req_url = root_url
-
 var config_path = get_home_dir() + "/.config/nextcloud-cli/config.toml"
 
 type Config struct {
@@ -66,9 +63,9 @@ func make_nc_request(method string, url string, data *strings.Reader, ocs bool, 
 	var err error
 
 	if data == nil {
-		req, err = http.NewRequest(method, req_url+url, nil)
+		req, err = http.NewRequest(method, config.RootURL+url, nil)
 	} else {
-		req, err = http.NewRequest(method, req_url+url, data)
+		req, err = http.NewRequest(method, config.RootURL+url, data)
 	}
 
 	check(err)
@@ -108,7 +105,7 @@ func share_file(remote_path string, pw string, config Config) {
 	var xml_ocs XMLOcs
 	var query string
 
-	remote_path = strings.Split(remote_path, "remote.php/dav/files/22niveri")[1]
+	remote_path = strings.Split(remote_path, "remote.php/dav/files/"+config.Username)[1]
 
 	endstr := ""
 
